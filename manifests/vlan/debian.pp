@@ -32,6 +32,7 @@ define network::vlan::debian(
     family    => $family,
     method    => $method,
     onboot    => $onboot,
+    mode      => vlan,
     mtu       => $mtu,
     options   => $opts,
   }
