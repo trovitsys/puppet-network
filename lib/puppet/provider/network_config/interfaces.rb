@@ -144,6 +144,11 @@ Puppet::Type.type(:network_config).provide(:interfaces) do
         # Ignore comments and blank lines
         next
 
+      when /^source|^source-directory/
+        # ignore source|source-directory sections, it makes this provider basically useless
+        # with Debian Jessie. Please refer to man 5 interfaces
+        next
+
       when /^auto|^allow-auto/
         # Parse out any auto sections
         interfaces = line.split(' ')
@@ -294,11 +299,11 @@ Puppet::Type.type(:network_config).provide(:interfaces) do
             stanza << "vlan-raw-device #{provider.options["vlan-raw-device"]}"
           else
             vlan_range_regex = %r[\d{1,3}|40[0-9][0-5]]
-            if ! provider.name.match(%r[\A([a-z]+\d+)(?::\d+|\.#{vlan_range_regex})\Z])          
+            if ! provider.name.match(%r[\A([a-z]+\d+)(?::\d+|\.#{vlan_range_regex})\Z])
               raise Puppet::Error, "Interface #{provider.name}: missing vlan-raw-device or wrong VLAN ID in the iface name"
             end
-          end                 
-      end      
+          end
+      end
 
       if provider.options and provider.options != :absent
         provider.options.each_pair do |key, val|
